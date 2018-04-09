@@ -16,7 +16,7 @@ function buyTickets(number) {
   var account = 0  // switch between two accounts for testing
   var completed = jclottery.lotteriesCompleted()
   var txhash, receipt, txstatus, price
-  console.log("NOTE! mining first purchase often takes a very long time!")
+  console.log("NOTE! sometimes mining takes a very long time!")
   console.log("don't freak out, take a coffee break and come back.")
   while (true) {
     price = 1000000 + (20000 * jclottery.totalEntries())
@@ -24,12 +24,12 @@ function buyTickets(number) {
     txhash = jclottery.ticket.sendTransaction({
       value: jclottery.ticketPrice(),
       from: eth.accounts[account],
-      gas: price
+      gas: Math.min(price, eth.getBlock(eth.blockNumber).gasLimit)
     })
     mine(1)
     receipt = eth.getTransactionReceipt(txhash)
     txstatus = debug.traceTransaction(txhash)
-    if (receipt.cumulativeGasUsed == price) {
+    if (receipt != null && receipt.cumulativeGasUsed == price) {
       console.error("problem purchasing ticket:")
       if (txstatus.structLogs != undefined) {
         console.error("final low-level statement:", JSON.stringify(
@@ -52,7 +52,7 @@ function buyTickets(number) {
       console.log("winning block:", jclottery.lastBlockhash())
       completed = jclottery.lotteriesCompleted()
       if (number >= 0) break
-    } else if (jclottery.lotteriesCompleted() < completed) {
+    } else if (jclottery.currentBlock() == 0) {
       console.log("lottery has apparently selfdestructed")
       break
     } else if (number > 0 && attempt == number) break
@@ -93,9 +93,8 @@ if (jclottery.address == undefined) {
     value: web3.toWei(.0111, "ether"),
     gas: 500000
   })
-  console.log("test transaction which should produce an event log")
-  jclottery.testEvent.sendTransaction({from: eth.accounts[0], gas: 500000})
-  buyTickets(0)  // buy tickets until lottery is won, or error
+  //buyTickets(1)  // buy tickets as specified
+  console.log("restart using 'buyTickets(0)' to complete lottery")
   events.stopWatching()
 }
 /* vim: set tabstop=2 expandtab shiftwidth=2 softtabstop=2: */

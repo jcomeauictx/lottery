@@ -30,7 +30,6 @@ contract Lottery {
     bytes32 public lastBlockhash;  // previous block's hash
 
     // events
-    event LogComparison(address addressBytes, bytes32 blockHash);
     event LogMessage(string message);
 
     // constructor
@@ -83,7 +82,6 @@ contract Lottery {
     }
 
     function checkIfWon() private {
-        emit LogMessage("checking for winners");
         uint winners = 0;
         uint payout;
         bool sent;
@@ -94,18 +92,17 @@ contract Lottery {
              * first to count winners for dividing the pot,
              * the second to pay each winner.
 
-             * don't check for winners if the pot has fewer than 10 entries.
+             * don't check for winners if the pot has fewer than 10 entries,
+             * or if lastBlockhash is 0, which means we couldn't get the
+             * hash because we're over 256 blocks after the last was mined.
              */
-            if (entries.length >= 10) {
+            if (lastBlockhash > 0 && entries.length >= 10) {
                 for (uint index = 0; index < entries.length; index++) {
                     address entry = entries[index];
-                    emit LogComparison(entry, lastBlockhash);
                     if (compareFinalByte(entry, lastBlockhash)) {
                         winners++;
                     }
                 }
-            } else {
-                emit LogMessage("not enough entries yet");
             }
             if (winners > 0) {
                 payout = jackpot / winners;
@@ -121,7 +118,6 @@ contract Lottery {
                 }
                 delete(entries);  // empties the list
                 lotteriesCompleted++;
-                if (lotteriesCompleted == lastLottery) selfdestruct(owner);
             }
             currentBlock = block.number;
         }
@@ -130,18 +126,29 @@ contract Lottery {
     // lets customer buy a ticket
     function ticket() public payable {
         // we gladly accept donations over or under ticket purchase price
-        emit LogMessage("ticket being purchased");
+        if (lotteriesCompleted == lastLottery) {
+            emit LogMessage("destroying contract");
+            /* last lottery was ended either with ticket purchase, in which
+             * case there will be one entry in the list, or by some as-yet-
+             * nonexistent method which would not make a ticket entry.
+             * 
+             * if the former, reward the buyer who closed out the last lottery.
+             */
+            require(entries.length < 2);
+            if (entries.length == 1) {
+                emit LogMessage("final payout to ender of last lottery");
+                selfdestruct(entries[0]);
+            } else {
+                emit LogMessage("final payout to lottery owner");
+                selfdestruct(owner);
+            }
+        }
         checkIfWon();
         if (msg.value >= ticketPrice) {
             jackpot += ticketPrice;
             entries.push(msg.sender);
             lastTicketTime = now;
-            emit LogMessage("ticket was purchased");
         }
-    }
-
-    function testEvent() public {
-        emit LogMessage("logging from testView");
     }
 }
 /* vim: set tabstop=4 expandtab shiftwidth=4 softtabstop=4: */
