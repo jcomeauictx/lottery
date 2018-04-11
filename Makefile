@@ -9,7 +9,7 @@ COMMA := ,
 EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
 # change the gas by e.g. `make GAS=500000 /tmp/simple.bin`
-default: lottery.test
+default: jclottery.test
 %.test: debug.js /tmp/%.abi /tmp/%.bin %.js
 	$(GETHTEST) --preload $(subst $(SPACE),$(COMMA),$+) console
 setup:
