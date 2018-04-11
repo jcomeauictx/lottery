@@ -49,9 +49,3 @@ argstest:
 	$(GETHTEST) --preload \
 	 <(echo args = [5, 6]),<(echo 'console.log(args[0] + args[1])') \
 	 console
-%.interact: %.sol
-	# get original version of contract and interact with it on mainnet
-	revno=$$(bzr log $< | \
-	 awk '$$1 ~ /^revno:$$/ {print $$2}' | tail -n 1); \
-	bzr cat -r$$revno $< > /tmp/original.$<
-	$(MAKE) /tmp/original.$(<:.sol=.abi)
