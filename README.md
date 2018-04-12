@@ -1,3 +1,5 @@
+# Synopsis
+
 This is a simple lottery which runs on the Ethereum network. Your address is
 your bid. You get paid if and only if someone else makes a bid after, but not
 more than 256 blocks after, your bid was mined, *and* the block hash ends with
@@ -34,3 +36,15 @@ By [rafaelosirs](https://github.com/ethereum/mist/issues/3646#issuecomment-36368
   to the same version as in remix and set optimization to "No" if you didn't 
   click it on remix in step 3.
 - You should now have a published contract, with source code on etherscan.
+
+# Interacting (remix.ethereum.org)
+- Buy a ticket under the Run tab, by entering the value in ether and clicking
+  the pink `ticket` button.
+- Click any of the blue buttons to view the values, such as `totalEntries`.
+
+<a href="screenshot.png"><img src="screenshot_small.png"></a>
+
+# Interacting (etherscan.io)
+- View variables under the `Read Smart Contract` tab. This currently does not
+  let you interact with the `payable` attributes such as `ticket`. See for
+  example our [deployment on Ropsten](https://ropsten.etherscan.io/address/0x6546254aeb308e9acc83d4d5eb4eb7329e1579eb#readContract)
