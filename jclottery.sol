@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.4.21;
 
 /* This lottery compares the low byte of sender's address with that of the
  * mined block. All matching entries for that block split the jackpot.
@@ -87,7 +87,7 @@ contract Lottery {
         bool sent;
         require(block.number >= currentBlock);
         if (block.number > currentBlock) {
-            lastBlockhash = blockhash(currentBlock);
+            lastBlockhash = block.blockhash(currentBlock);
             /* two loops through the entries:
              * first to count winners for dividing the pot,
              * the second to pay each winner.
