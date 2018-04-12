@@ -11,3 +11,26 @@ the same byte that your address does.
  + `buyTickets(0)` to keep buying until one ticket wins
  + `buyTickets(-1)` to keep buying until all lotteries specified by the
    contract have finished and it has selfdestructed.
+
+# Deploying
+By [rafaelosirs](https://github.com/ethereum/mist/issues/3646#issuecomment-363683548):
+- Install [Metamask](https://metamask.io/) plugin for your browser
+- Navigate to [https://remix.ethereum.org/](https://remix.ethereum.org)
+- Click on settings and choose your compiler.
+  Note that optimization is unchecked by default.
+- Login to Metamask and choose your network. It is a good idea to first use the
+  Ropsten network for testing, and using the Buy button to get ETH from a free
+  faucet.
+- Go back to the Compile tab, delete the contents of the example contract, and
+  paste in your own. Some versions of chrome are buggy and will not accept
+  large pastes, so you may need to break it up into chunks.
+- Click on the Run tab. If your contract requires input data you need to
+  "double quote" it. Click on Create.
+- Metamask will open. Choose your gas price and Submit. Open Metamask again,
+  click the transaction hash.
+- Once published, in etherscan go to the contract address and click the Contract
+  Code tab. Verify and Publish.
+- Set the name of the contract to the exact same name as in remix. Compile 
+  to the same version as in remix and set optimization to "No" if you didn't 
+  click it on remix in step 3.
+- You should now have a published contract, with source code on etherscan.
