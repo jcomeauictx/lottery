@@ -39,6 +39,7 @@ contract Lottery {
     Numbers[256] public entries;
     uint public totalEntries;
     address public owner;  // address of lottery contract publisher
+    address public lastBuyer; // last ticket purchaser
     bytes32 public lastBlockhash;  // previous block's hash
 
     // events
@@ -121,15 +122,15 @@ contract Lottery {
         if (lastLottery > 0 && lotteriesCompleted == lastLottery) {
             emit LogMessage("destroying contract");
             /* last lottery was ended either with ticket purchase, in which
-             * case there will be one entry in the list, or by some as-yet-
-             * nonexistent method which would not make a ticket entry.
+             * case there will be a nonzero count, or by calling
+             * ticket() without sufficient value.
              * 
              * if the former, reward the buyer who closed out the last lottery.
              */
             require(totalEntries < 2);
-            if (totalEntries == 1) {
+            if (totalEntries > 0) {
                 emit LogMessage("final payout to ender of last lottery");
-                //selfdestruct(findFirstEntry());  // FIXME: create routine
+                selfdestruct(lastBuyer);
             } else {
                 emit LogMessage("final payout to lottery owner");
                 selfdestruct(owner);
@@ -137,9 +138,10 @@ contract Lottery {
         }
         checkIfWon();
         if (msg.value >= ticketPrice) {
+            lastBuyer = msg.sender;
             tickets = msg.value / ticketPrice;
             jackpot += ticketPrice * tickets;
-            entries[number].tickets.push(Tickets(msg.sender, tickets));
+            entries[number].tickets.push(Tickets(lastBuyer, tickets));
             entries[number].count += tickets;
             totalEntries += tickets;
             lastTicketTime = now;
