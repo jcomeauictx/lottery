@@ -77,7 +77,7 @@ if (jclottery.address == undefined) {
   console.log("unlocking accounts so we can buy tickets")
   personal.unlockAccount(eth.accounts[0], null, 1000000)
   personal.unlockAccount(eth.accounts[1], null, 1000000)
-  var events = jclottery.allEvents("pending")
+  var events = jclottery.allEvents({fromBlock: "latest", toBlock: "latest"})
   events.watch(function(error, result) {
     console.log(
       "EVENT from allEvents:",

@@ -78,11 +78,6 @@ contract Lottery {
     }
 
     // check for winner and set state
-    /* another, possibly better if the lottery becomes really popular, would
-     * be to store ticket purchases and block numbers in one or more mappings,
-     * and let each participant check if they won and withdraw winnings.
-     */
-
     function checkIfWon() private {
         Numbers storage winners;
         Tickets storage winner;
