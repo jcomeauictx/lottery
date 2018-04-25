@@ -41,6 +41,7 @@ contract Lottery {
     address public owner;  // address of lottery contract publisher
     address public lastBuyer; // last ticket purchaser
     bytes32 public lastBlockhash;  // previous block's hash
+    uint public lastPurchaseCount;  // number of tickets in last purchase
 
     // events
     event LogMessage(string message);
@@ -103,6 +104,7 @@ contract Lottery {
                     if (sent) jackpot -= funds;
                 }
                 delete(entries);  // empties the list
+                lastPurchaseCount = 0;
                 lotteriesCompleted++;
             }
             currentBlock = block.number;
@@ -122,8 +124,8 @@ contract Lottery {
              * 
              * if the former, reward the buyer who closed out the last lottery.
              */
-            require(totalEntries < 2);
-            if (totalEntries > 0) {
+            require(totalEntries <= lastPurchaseCount);
+            if (totalEntries == lastPurchaseCount) {
                 emit LogMessage("final payout to ender of last lottery");
                 selfdestruct(lastBuyer);
             } else {
@@ -139,6 +141,7 @@ contract Lottery {
             entries[number].tickets.push(Tickets(lastBuyer, tickets));
             entries[number].count += tickets;
             totalEntries += tickets;
+            lastPurchaseCount = tickets;
             lastTicketTime = now;
         }
     }
