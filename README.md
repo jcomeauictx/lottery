@@ -1,9 +1,18 @@
 # Synopsis
 
-This is a simple lottery which runs on the Ethereum network. Your address is
-your bid. You get paid if and only if someone else makes a bid after, but not
-more than 256 blocks after, your bid was mined, *and* the block hash ends with
-the same byte that your address does.
+This is a simple lottery which runs on the Ethereum network, inspired by
+[Alex Cabrera's](https://www.stateofthedapps.com/dapps/the-ethereum-lottery).
+Your address is your bid. You get paid if and only if someone else makes a
+bid after, but not more than 256 blocks after, your bid was mined, *and*
+the block hash ends with the same byte that your address does.
+
+Improvements over Alex's:
+- Owner cannot steal lottery funds (see function `withdraw` of [Alex's code](https://etherscan.io/address/0x1e217adc6a6adc16e248af109ab7efa4d1bb252d#code))
+- Players cannot determine which ticket will be a winner (Alex's starts out
+  with the 10th ticket being a winner, then the 11th the next lottery, up
+  to 20 and back down to 10 again).
+- Allows the owner to set a max number of lotteries, at which point the
+  contract selfdestructs.
 
 # Testing
 - `make setup` to create private blockchain and 2 test accounts
