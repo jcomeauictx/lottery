@@ -1,8 +1,8 @@
 if (typeof(jclottery) == "undefined") {
   console.warn("should use `make jclottery.test`")
-  require("debug.js")
-  require("/tmp/jclottery.abi")
-  require("/tmp/jclottery.bin")
+  loadScript("debug.js")
+  loadScript("/tmp/jclottery.abi")
+  loadScript("/tmp/jclottery.bin")
 }
 function buyTickets(number) {
   /* buy tickets until there's a winner (number == 0)
@@ -77,7 +77,7 @@ if (jclottery.address == undefined) {
   console.log("unlocking accounts so we can buy tickets")
   personal.unlockAccount(eth.accounts[0], null, 1000000)
   personal.unlockAccount(eth.accounts[1], null, 1000000)
-  var events = jclottery.allEvents({fromBlock: "latest", toBlock: "latest"})
+  var events = jclottery.allEvents("pending")
   events.watch(function(error, result) {
     console.log(
       "EVENT from allEvents:",

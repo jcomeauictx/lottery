@@ -3,7 +3,9 @@ SHELL := /bin/bash
 GAS ?= 1000000
 TESTDIR ?= ~/.ethtest0
 TESTNET ?= $(shell date +%s)
-GETHTEST := geth --datadir $(TESTDIR) --networkid $(TESTNET) --maxpeers 0
+#STRACE ?= strace -f -o /tmp/geth.log
+GETH := $(STRACE) geth
+GETHTEST := $(GETH) --datadir $(TESTDIR) --networkid $(TESTNET) --maxpeers 0
 # for converting space-separated list to comma-separated
 COMMA := ,
 EMPTY :=
@@ -44,7 +46,7 @@ sync:
 	# quickest way to sync live blockchain
 	# https://ethereum.stackexchange.com/questions/392/
 	#  how-can-i-get-a-geth-node-to-download-the-blockchain-quickly
-	geth --fast --cache=512
+	$(GETH) --fast --cache=512
 argstest:
 	$(GETHTEST) --preload \
 	 <(echo args = [5, 6]),<(echo 'console.log(args[0] + args[1])') \

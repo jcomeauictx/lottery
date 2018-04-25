@@ -1,20 +1,23 @@
 var mine = function(blocks, threads) {
   threads = threads || 4
-  miner.start(threads)
+  alreadyMining = eth.mining
+  if (!alreadyMining) miner.start(threads)
   admin.sleepBlocks(blocks)
-  miner.stop()
+  if (!alreadyMining) miner.stop()
 }
-var logs = function(contract) {
-  var filter = eth.filter({address: contract.address, fromBlock: 0})
+var logs = function(contract, startBlock) {
+  startBlock = startBlock || contract ? eth.getTransactionReceipt(
+    contract.transactionHash).blockNumber : 0
+  var filter = eth.filter({address: contract.address, fromBlock: startBlock})
   return filter.get()
 }
-var logdata = function(contract) {
-  return logs(contract).map(
+var logdata = function(contract, startBlock) {
+  return logs(contract, startBlock).map(
     function(s) {return s.data}
   )
 }
-var logstrings = function(contract) {
-  return logs(contract).map(
+var logstrings = function(contract, startBlock) {
+  return logs(contract, startBlock).map(
     function(s) {return readable(s.data)}
   )
 }
