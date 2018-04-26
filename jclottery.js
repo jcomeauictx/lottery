@@ -16,6 +16,7 @@ function buyTickets(number) {
   var account = 0  // switch between two accounts for testing
   var completed = jclottery.lotteriesCompleted()
   var txhash, receipt, txstatus, price
+  var blockNumber = eth.blockNumber
   console.log("NOTE! sometimes mining takes a very long time!")
   console.log("don't freak out, take a coffee break and come back.")
   while (true) {
@@ -29,6 +30,8 @@ function buyTickets(number) {
     mine(1)
     receipt = eth.getTransactionReceipt(txhash)
     txstatus = debug.traceTransaction(txhash)
+    logstrings(jclottery, blockNumber)
+    blockNumber = eth.blockNumber
     if (receipt != null && receipt.cumulativeGasUsed == price) {
       console.error("problem purchasing ticket:")
       if (txstatus.structLogs != undefined) {
@@ -58,13 +61,15 @@ function buyTickets(number) {
     } else if (number > 0 && attempt == number) break
   }
 }
-console.log("jclottery.transactionHash:", jclottery.transactionHash)
+var transactionHash = jclottery.transactionHash
+console.log("jclottery.transactionHash:", transactionHash)
 console.log("jclottery.address:", jclottery.address)
 while (jclottery.address == undefined) {
   var receipt = eth.getTransactionReceipt(jclottery.transactionHash)
   if (receipt && receipt.contractAddress) {
     var contract = eth.contract(jclottery.abi)
     jclottery = contract.at(receipt.contractAddress)
+    jclottery.transactionHash = transactionHash
   } else {
     admin.sleep(0.1)
   }
@@ -77,15 +82,6 @@ if (jclottery.address == undefined) {
   console.log("unlocking accounts so we can buy tickets")
   personal.unlockAccount(eth.accounts[0], null, 1000000)
   personal.unlockAccount(eth.accounts[1], null, 1000000)
-  var events = jclottery.allEvents("pending")
-  events.watch(function(error, result) {
-    console.log(
-      "EVENT from allEvents:",
-      result.args != undefined ?
-        readable(result.args.message) :
-        JSON.stringify(result)
-    )
-  })
   console.log("sending a donation to the unnamed acceptor function")
   eth.sendTransaction({
     from: eth.accounts[0],
@@ -93,8 +89,8 @@ if (jclottery.address == undefined) {
     value: web3.toWei(.0111, "ether"),
     gas: 500000
   })
+  logstrings(jclottery)
   //buyTickets(1)  // buy tickets as specified
   console.log("restart using 'buyTickets(0)' to complete lottery")
-  events.stopWatching()
 }
 /* vim: set tabstop=2 expandtab shiftwidth=2 softtabstop=2: */

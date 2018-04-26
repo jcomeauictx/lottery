@@ -52,7 +52,7 @@ contract Lottery {
      * means they are 0. this is fine for `rake` but the ticket needs to
      * cost something.
      * lastLottery is set to the "terminate" argument, it must be nonzero
-     * to have any effect, otherwise the contract ends at the default value.
+     * to have any effect.
      */
     function Lottery(uint rake, uint price, uint terminate) public {
         emit LogMessage("registering new lottery");
@@ -60,7 +60,7 @@ contract Lottery {
         rakePercent = rake;  // specified in percent
         ticketPrice = price > 0 ? price : .005 ether;  // specified in wei
         // contract is deleted after lastLottery complete
-        lastLottery = terminate > 0 ? terminate : 1;
+        lastLottery = terminate;
         emit LogMessage("lottery registered");
     }
 
@@ -85,6 +85,7 @@ contract Lottery {
         uint payout;
         bool sent;
         uint funds;
+        emit LogMessage("comparing block.number to currentBlock");
         require(block.number >= currentBlock);
         if (block.number > currentBlock) {
             lastBlockhash = block.blockhash(currentBlock);
@@ -92,10 +93,11 @@ contract Lottery {
              * or if lastBlockhash is 0, which means we couldn't get the
              * hash because we're over 256 blocks after the last was mined.
              */
-            if (lastBlockhash > 0 && totalEntries >= 10) {
+            if (lastBlockhash != 0 && totalEntries >= 10) {
                 winners = entries[uint(lastBlockhash[31])];
             }
             if (winners.count > 0) {
+                emit LogMessage("found winners!");
                 payout = jackpot / winners.count;
                 for (uint index = 0; index < winners.tickets.length; index++) {
                     winner = winners.tickets[index];            
@@ -136,6 +138,7 @@ contract Lottery {
         checkIfWon();
         if (msg.value >= ticketPrice) {
             lastBuyer = msg.sender;
+            emit LogMessage("selling tickets");
             tickets = msg.value / ticketPrice;
             jackpot += ticketPrice * tickets;
             entries[number].tickets.push(Tickets(lastBuyer, tickets));
