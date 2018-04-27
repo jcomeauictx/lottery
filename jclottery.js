@@ -30,7 +30,7 @@ function buyTickets(number) {
     mine(1)
     receipt = eth.getTransactionReceipt(txhash)
     txstatus = debug.traceTransaction(txhash)
-    logstrings(jclottery, blockNumber)
+    console.log("EVENTS:", logstrings(jclottery, blockNumber))
     blockNumber = eth.blockNumber
     if (receipt != null && receipt.cumulativeGasUsed == price) {
       console.error("problem purchasing ticket:")
@@ -89,7 +89,7 @@ if (jclottery.address == undefined) {
     value: web3.toWei(.0111, "ether"),
     gas: 500000
   })
-  logstrings(jclottery)
+  console.log("EVENTS:", logstrings(jclottery))
   //buyTickets(1)  // buy tickets as specified
   console.log("restart using 'buyTickets(0)' to complete lottery")
 }
