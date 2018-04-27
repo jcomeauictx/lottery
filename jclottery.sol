@@ -60,7 +60,7 @@ contract Lottery {
         rakePercent = rake;  // specified in percent
         ticketPrice = price > 0 ? price : .005 ether;  // specified in wei
         // contract is deleted after lastLottery complete
-        lastLottery = terminate;
+        lastLottery = terminate > 0 ? terminate : 0;
         emit LogMessage("lottery registered");
     }
 
