@@ -85,7 +85,7 @@ contract Lottery {
         uint payout;
         bool sent;
         uint funds;
-        emit LogMessage("comparing block.number to currentBlock");
+        //emit LogMessage("comparing block.number to currentBlock");
         //require(block.number >= currentBlock);
         if (block.number > currentBlock) {
             lastBlockhash = block.blockhash(currentBlock);
