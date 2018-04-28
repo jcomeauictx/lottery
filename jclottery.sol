@@ -133,6 +133,7 @@ contract Lottery {
         checkIfWon();
         if (msg.value >= ticketPrice) {
             lastBuyer = msg.sender;
+            emit LogMessage("selling tickets");
             tickets = msg.value / ticketPrice;
             jackpot += ticketPrice * tickets;
             entries[number].tickets.push(Tickets(lastBuyer, tickets));
