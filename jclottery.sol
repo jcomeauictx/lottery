@@ -41,7 +41,6 @@ contract Lottery {
     address public owner;  // address of lottery contract publisher
     address public lastBuyer; // last ticket purchaser
     bytes32 public lastBlockhash;  // previous block's hash
-    uint public lastPurchaseCount;  // number of tickets in last purchase
 
     // events
     event LogMessage(string message);
@@ -60,7 +59,7 @@ contract Lottery {
         rakePercent = rake;  // specified in percent
         ticketPrice = price > 0 ? price : .005 ether;  // specified in wei
         // contract is deleted after lastLottery complete
-        lastLottery = terminate > 0 ? terminate : 0;
+        lastLottery = terminate > 0 ? terminate : 1;
         emit LogMessage("lottery registered");
     }
 
@@ -85,8 +84,6 @@ contract Lottery {
         uint payout;
         bool sent;
         uint funds;
-        emit LogMessage("comparing block.number to currentBlock");
-        require(block.number >= currentBlock);
         if (block.number > currentBlock) {
             lastBlockhash = block.blockhash(currentBlock);
             /* don't check for winners if the pot has fewer than 10 entries,
@@ -97,7 +94,6 @@ contract Lottery {
                 winners = entries[uint(lastBlockhash[31])];
             }
             if (winners.count > 0) {
-                emit LogMessage("found winners!");
                 payout = jackpot / winners.count;
                 for (uint index = 0; index < winners.tickets.length; index++) {
                     winner = winners.tickets[index];            
@@ -106,7 +102,6 @@ contract Lottery {
                     if (sent) jackpot -= funds;
                 }
                 delete(entries);  // empties the list
-                lastPurchaseCount = 0;
                 lotteriesCompleted++;
             }
             currentBlock = block.number;
@@ -126,8 +121,7 @@ contract Lottery {
              * 
              * if the former, reward the buyer who closed out the last lottery.
              */
-            require(totalEntries <= lastPurchaseCount);
-            if (totalEntries == lastPurchaseCount) {
+            if (totalEntries > 0) {
                 emit LogMessage("final payout to ender of last lottery");
                 selfdestruct(lastBuyer);
             } else {
@@ -138,13 +132,11 @@ contract Lottery {
         checkIfWon();
         if (msg.value >= ticketPrice) {
             lastBuyer = msg.sender;
-            emit LogMessage("selling tickets");
             tickets = msg.value / ticketPrice;
             jackpot += ticketPrice * tickets;
             entries[number].tickets.push(Tickets(lastBuyer, tickets));
             entries[number].count += tickets;
             totalEntries += tickets;
-            lastPurchaseCount = tickets;
             lastTicketTime = now;
         }
     }
