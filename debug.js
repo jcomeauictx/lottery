@@ -8,6 +8,9 @@ var mine = function(blocks, threads) {
 var logs = function(contract, startBlock) {
   startBlock = startBlock || contract ? eth.getTransactionReceipt(
     contract.transactionHash).blockNumber : 0
+  console.debug(
+    "getting logs for contract", contract.address, "from block", startBlock
+  )
   var filter = eth.filter({address: contract.address, fromBlock: startBlock})
   return filter.get()
 }

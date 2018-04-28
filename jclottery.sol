@@ -41,6 +41,7 @@ contract Lottery {
     address public owner;  // address of lottery contract publisher
     address public lastBuyer; // last ticket purchaser
     bytes32 public lastBlockhash;  // previous block's hash
+    uint public lastPurchaseCount;  // number of tickets in last purchase
 
     // events
     event LogMessage(string message);
