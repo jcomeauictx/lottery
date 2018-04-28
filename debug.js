@@ -6,8 +6,8 @@ var mine = function(blocks, threads) {
   if (!alreadyMining) miner.stop()
 }
 var logs = function(contract, startBlock) {
-  startBlock = startBlock || contract ? eth.getTransactionReceipt(
-    contract.transactionHash).blockNumber : 0
+  startBlock = startBlock || (contract ? eth.getTransactionReceipt(
+    contract.transactionHash).blockNumber : 0)
   console.debug(
     "getting logs for contract", contract.address, "from block", startBlock
   )
