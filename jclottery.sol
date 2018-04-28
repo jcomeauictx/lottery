@@ -85,6 +85,8 @@ contract Lottery {
         uint payout;
         bool sent;
         uint funds;
+        emit LogMessage("comparing block.number to currentBlock");
+        require(block.number >= currentBlock);
         if (block.number > currentBlock) {
             lastBlockhash = block.blockhash(currentBlock);
             /* don't check for winners if the pot has fewer than 10 entries,
