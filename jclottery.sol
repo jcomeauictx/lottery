@@ -97,6 +97,7 @@ contract Lottery {
                 winners = entries[uint(lastBlockhash[31])];
             }
             if (winners.count > 0) {
+                emit LogMessage("found winners!");
                 payout = jackpot / winners.count;
                 for (uint index = 0; index < winners.tickets.length; index++) {
                     winner = winners.tickets[index];            
