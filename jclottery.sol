@@ -103,6 +103,7 @@ contract Lottery {
                     if (sent) jackpot -= funds;
                 }
                 delete(entries);  // empties the list
+                lastPurchaseCount = 0;
                 lotteriesCompleted++;
             }
             currentBlock = block.number;
@@ -139,6 +140,7 @@ contract Lottery {
             entries[number].tickets.push(Tickets(lastBuyer, tickets));
             entries[number].count += tickets;
             totalEntries += tickets;
+            lastPurchaseCount = tickets;
             lastTicketTime = now;
         }
     }
