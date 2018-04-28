@@ -123,7 +123,8 @@ contract Lottery {
              * 
              * if the former, reward the buyer who closed out the last lottery.
              */
-            if (totalEntries > 0) {
+            require(totalEntries <= lastPurchaseCount);
+            if (totalEntries == lastPurchaseCount) {
                 emit LogMessage("final payout to ender of last lottery");
                 selfdestruct(lastBuyer);
             } else {
