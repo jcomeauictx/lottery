@@ -32,6 +32,7 @@ function buyTickets(number) {
     txstatus = debug.traceTransaction(txhash)
     console.log("EVENTS:", logstrings(jclottery, blockNumber))
     blockNumber = eth.blockNumber
+    console.log("blockNumber", blockNumber, "eth.blocknumber", eth.blockNumber)
     if (receipt != null && receipt.cumulativeGasUsed == price) {
       console.error("problem purchasing ticket:")
       if (txstatus.structLogs != undefined) {
