@@ -30,7 +30,10 @@ function buyTickets(number) {
     mine(1)
     receipt = eth.getTransactionReceipt(txhash)
     txstatus = debug.traceTransaction(txhash)
-    console.log("EVENTS:", logstrings(jclottery, blockNumber))
+    console.log("EVENTS:", logstrings(jclottery, blockNumber + 1))
+    for (var block = blockNumber + 1; block < eth.blockNumber; block++) {
+      console.log("hash of block", block, ":", eth.getBlock(block).hash)
+    }
     blockNumber = eth.blockNumber
     if (receipt != null && receipt.cumulativeGasUsed == price) {
       console.error("problem purchasing ticket:")
