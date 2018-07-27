@@ -5,6 +5,11 @@ your bid. You get paid if and only if someone else makes a bid after, but not
 more than 256 blocks after, your bid was mined, *and* the block hash ends with
 the same byte that your address does.
 
+I used [Alex Cabrera's](https://www.stateofthedapps.com/dapps/the-ethereum-lottery)
+[code](https://etherscan.io/address/0x1e217adc6a6adc16e248af109ab7efa4d1bb252d#code)
+as a guide, but tried to avoid the problems with predictability (lines 105-110)
+and potential theft (the `withdraw` function) that his source allows.
+
 # Testing
 - `make setup` to create private blockchain and 2 test accounts
 - `make jclottery.test` to create the contract and drop you into the console.
